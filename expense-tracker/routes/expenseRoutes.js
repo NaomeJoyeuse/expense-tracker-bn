@@ -2,8 +2,6 @@ const express = require("express");
 const Expense = require("../models/expense");
 
 const router = express.Router();
-
-// ✅ Create a new expense
 router.post("/", async (req, res) => {
   try {
     const { title, amount, category } = req.body;
@@ -15,7 +13,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ Get all expenses
 router.get("/", async (req, res) => {
   try {
     const expenses = await Expense.find();
@@ -25,7 +22,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Delete an expense
 router.delete("/:id", async (req, res) => {
   try {
     await Expense.findByIdAndDelete(req.params.id);
@@ -35,4 +31,20 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+    try {
+      const { title, amount, category } = req.body;
+      const updatedExpense = await Expense.findByIdAndUpdate(
+        req.params.id,
+        { title, amount, category },
+        { new: true, runValidators: true }
+      );
+      if (!updatedExpense) {
+        return res.status(404).json({ error: "Expense not found" });
+      }
+      res.json(updatedExpense);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update expense" });
+    }
+  });
 module.exports = router;
