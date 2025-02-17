@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const expenseRoutes = require("./routes/expenseRoutes");
+const path = require("path"); // Import path module
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,12 +20,15 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Root route
+// Serve the index.html at the root
 app.get("/", (req, res) => {
-  res.send("Expense Tracker API is running...");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Expense routes (call the routes here)
+// Serve static files like CSS and JS from the 'public' folder
+app.use(express.static("public"));
+
+// Expense routes
 app.use("/api/expenses", expenseRoutes);
 
 app.listen(PORT, () => {
